@@ -1,12 +1,16 @@
-import {DisplayMode, Resolution} from "excalibur";
+import './sass/main.scss'
+
+import {DisplayMode, Physics, Resolution} from "excalibur";
 import {Game} from "./game";
 import {DevTool} from "@excaliburjs/dev-tools";
+
+Physics.useArcadePhysics();
 
 export const game = new Game({
     canvasElementId: 'game-container',
     displayMode: DisplayMode.FillScreen,
     resolution: Resolution.Standard,
-    suppressHiDPIScaling: true,
+    maxFps: 60,
 });
 
 game.start().then(r => console.log(r));

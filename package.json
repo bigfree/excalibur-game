@@ -9,12 +9,14 @@
     "test": "npm run build && ex-test -d ./dist -t ./test/test.js"
   },
   "dependencies": {
+    "@excaliburjs/plugin-tiled": "^0.27.0",
     "@excaliburjs/testing": "^0.25.1",
     "excalibur": "^0.26.0",
     "typescript": "^4.7.4"
   },
   "devDependencies": {
     "@excaliburjs/dev-tools": "^0.25.3",
+    "@parcel/transformer-sass": "2.6.2",
     "parcel": "^2.6.2"
   }
 }
