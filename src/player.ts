@@ -1,11 +1,15 @@
-import {Actor, ActorArgs, Engine, Input, PreCollisionEvent} from "excalibur";
+import {Actor, ActorArgs, Engine, Input, PreCollisionEvent, Vector} from "excalibur";
 
 export class Player extends Actor {
     private health: number;
     private speed: number;
+    private isClicked: boolean;
 
     constructor(config: ActorArgs) {
-        super(config);
+        super({
+            ...config,
+            name: 'player'
+        });
     }
 
     /**
@@ -18,7 +22,17 @@ export class Player extends Actor {
 
         this.on('precollision', (event: PreCollisionEvent) => this.onPreCollision(event));
 
-        engine.input.pointers.primary.on('down', (event: Input.PointerEvent) => this.onHandleMoveEvent(engine, event));
+        engine.input.pointers.primary.on('down', (event: Input.PointerEvent) => {
+            return this.onHandleInputPointerDownEvent(engine, event);
+        });
+
+        engine.input.pointers.primary.on('up', (event: Input.PointerEvent) => {
+            return this.onHandleInputPointerUpEvent(event);
+        });
+
+        engine.input.pointers.primary.on('move', (event: Input.PointerEvent) => {
+            return this.onHandleInputPointerMoveEvent(engine, event);
+        });
         // engine.input.pointers.primary.on('down', (event: Input.PointerEvent) => {
         //     this.actions.clearActions();
         //     this.actions.moveTo(event.worldPos, this.speed);
@@ -46,12 +60,42 @@ export class Player extends Actor {
      * @param event
      * @private
      */
-    private onHandleMoveEvent(engine: Engine, event: Input.PointerEvent): void
-    {
-        let directions = event.worldPos;
+    private onHandleInputPointerDownEvent(engine: Engine, event: Input.PointerEvent): void {
+        this.isClicked = true;
+        this.setPlayerPosition(event.worldPos);
+        // this.vel = directions.scale(this.speed/distance);
+    }
 
+    /**
+     * Mouse click up event
+     * @param event
+     * @private
+     */
+    private onHandleInputPointerUpEvent(event: Input.PointerEvent): void {
+        this.isClicked = false;
+    }
+
+    /**
+     * Mousemove event
+     * @param engine
+     * @param event
+     * @private
+     */
+    private onHandleInputPointerMoveEvent(engine: Engine, event: Input.PointerEvent): void {
+        if (!this.isClicked) {
+            return;
+        }
+
+        this.setPlayerPosition(event.worldPos);
+    }
+
+    /**
+     * Set player position by directions
+     * @param directions
+     * @private
+     */
+    private setPlayerPosition(directions: Vector): void {
         this.actions.clearActions();
         this.actions.moveTo(directions, this.speed);
-        // this.vel = directions.scale(this.speed/distance);
     }
 }
