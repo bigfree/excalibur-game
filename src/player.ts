@@ -1,4 +1,4 @@
-import {Actor, ActorArgs, Engine, Input, PreCollisionEvent, Vector} from "excalibur";
+import {Actor, ActorArgs, Engine, Input, MoveTo, PreCollisionEvent, Vector} from "excalibur";
 
 export class Player extends Actor {
     private health: number;
@@ -18,7 +18,7 @@ export class Player extends Actor {
      */
     public onInitialize(engine: Engine) {
         this.health = 100
-        this.speed = 300;
+        this.speed = 400;
 
         this.on('precollision', (event: PreCollisionEvent) => this.onPreCollision(event));
 
@@ -33,14 +33,11 @@ export class Player extends Actor {
         engine.input.pointers.primary.on('move', (event: Input.PointerEvent) => {
             return this.onHandleInputPointerMoveEvent(engine, event);
         });
-        // engine.input.pointers.primary.on('down', (event: Input.PointerEvent) => {
-        //     this.actions.clearActions();
-        //     this.actions.moveTo(event.worldPos, this.speed);
-        // });
     }
 
     public update(engine: Engine, delta: number) {
         // console.log(this.vel());
+        super.update(engine, delta);
     }
 
     public onPostUpdate(engine: Engine, delta: number) {
@@ -95,7 +92,15 @@ export class Player extends Actor {
      * @private
      */
     private setPlayerPosition(directions: Vector): void {
-        this.actions.clearActions();
+        this.actions.getQueue().remove(MoveTo);
+
+        // this.actions.clearActions()
         this.actions.moveTo(directions, this.speed);
+
+        // let dir = Vector.Zero.clone();
+        // dir.x = directions.x;
+        // dir.y = directions.y;
+        // console.log(directions, dir, dir.normalize());
+        // this.vel = dir;
     }
 }
